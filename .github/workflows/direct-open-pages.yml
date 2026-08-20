@@ -1,0 +1,33 @@
+name: Direct Open - GitHub Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions: {contents: read, pages: write, id-token: write}
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: {name: github-pages, url: "${{ steps.deployment.outputs.page_url }}"}
+    steps:
+      - uses: actions/checkout@v4
+      - if: ${{ hashFiles('package.json') != '' }}
+        uses: actions/setup-node@v4
+        with: {node-version: 20, cache: npm}
+      - name: Prepare site
+        shell: bash
+        run: |
+          set +e; rm -rf _site; mkdir _site; BUILT=0
+          if [ -f package.json ]; then npm ci || npm install; if grep -q '"vite"' package.json; then npm run build -- --base=./ && BUILT=1; else npm run build && BUILT=1; fi; fi
+          if [ "$BUILT" = 1 ] && [ -d dist ]; then cp -a dist/. _site/; elif [ "$BUILT" = 1 ] && [ -d build ]; then cp -a build/. _site/; elif [ "$BUILT" = 1 ] && [ -d out ]; then cp -a out/. _site/; else rsync -a --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='_site' ./ _site/; fi
+          if [ ! -f _site/index.html ]; then python - <<'PY'
+          from pathlib import Path; import html
+          r=Path('_site'); s=next((r/n for n in ('index.md','index.md.txt','README.md','README.txt') if (r/n).exists()),None); b=html.escape(s.read_text(errors='ignore') if s else 'Repository available on GitHub.'); (r/'index.html').write_text('<!doctype html><meta charset="utf-8"><style>body{font-family:Arial;max-width:1000px;margin:40px auto;padding:20px;background:#081525;color:#eef6ff}pre{white-space:pre-wrap}</style><pre>'+b+'</pre>')
+          PY
+          fi
+          touch _site/.nojekyll
+      - uses: actions/configure-pages@v5
+        with: {enablement: true}
+      - uses: actions/upload-pages-artifact@v4
+        with: {path: _site}
+      - id: deployment
+        uses: actions/deploy-pages@v4
