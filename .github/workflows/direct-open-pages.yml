@@ -1,33 +1,54 @@
 name: Direct Open - GitHub Pages
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
-permissions: {contents: read, pages: write, id-token: write}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    environment: {name: github-pages, url: "${{ steps.deployment.outputs.page_url }}"}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - if: ${{ hashFiles('package.json') != '' }}
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        if: ${{ hashFiles('package.json') != '' }}
         uses: actions/setup-node@v4
-        with: {node-version: 20, cache: npm}
+        with:
+          node-version: 20
       - name: Prepare site
         shell: bash
         run: |
-          set +e; rm -rf _site; mkdir _site; BUILT=0
-          if [ -f package.json ]; then npm ci || npm install; if grep -q '"vite"' package.json; then npm run build -- --base=./ && BUILT=1; else npm run build && BUILT=1; fi; fi
-          if [ "$BUILT" = 1 ] && [ -d dist ]; then cp -a dist/. _site/; elif [ "$BUILT" = 1 ] && [ -d build ]; then cp -a build/. _site/; elif [ "$BUILT" = 1 ] && [ -d out ]; then cp -a out/. _site/; else rsync -a --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='_site' ./ _site/; fi
-          if [ ! -f _site/index.html ]; then python - <<'PY'
-          from pathlib import Path; import html
-          r=Path('_site'); s=next((r/n for n in ('index.md','index.md.txt','README.md','README.txt') if (r/n).exists()),None); b=html.escape(s.read_text(errors='ignore') if s else 'Repository available on GitHub.'); (r/'index.html').write_text('<!doctype html><meta charset="utf-8"><style>body{font-family:Arial;max-width:1000px;margin:40px auto;padding:20px;background:#081525;color:#eef6ff}pre{white-space:pre-wrap}</style><pre>'+b+'</pre>')
-          PY
+          set -e
+          rm -rf _site
+          mkdir -p _site
+          if [ -f package.json ]; then
+            if [ -f package-lock.json ]; then npm ci; else npm install; fi
+            if node -e "const p=require('./package.json'); process.exit(p.scripts&&p.scripts.build?0:1)"; then
+              if node -e "const p=require('./package.json'); process.exit((p.dependencies&&p.dependencies.vite)||(p.devDependencies&&p.devDependencies.vite)?0:1)"; then npm run build -- --base=./; else npm run build; fi
+            fi
           fi
+          if [ -d dist ]; then cp -a dist/. _site/; elif [ -d build ]; then cp -a build/. _site/; elif [ -d out ]; then cp -a out/. _site/; else rsync -a --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='_site' ./ _site/; fi
+          if [ ! -f _site/index.html ]; then printf '%s\n' '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Repository</title><style>body{font-family:Arial,sans-serif;background:#081525;color:#eef6ff;padding:32px;line-height:1.6}</style><h1>Repository available</h1><p>This repository does not contain a directly runnable index page.</p>' > _site/index.html; fi
           touch _site/.nojekyll
-      - uses: actions/configure-pages@v5
-        with: {enablement: true}
-      - uses: actions/upload-pages-artifact@v4
-        with: {path: _site}
-      - id: deployment
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
