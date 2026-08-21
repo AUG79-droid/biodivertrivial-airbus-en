@@ -223,6 +223,9 @@
           </div>
           <div class="progress-track"><i style="width:${progress}%"></i></div>
           <div class="question-context"><span class="tag domain" style="--domain:${domain.color}">${domain.name}</span><span class="tag">${question.difficulty}</span><span class="tag">+ speed bonus</span></div>
+          <div class="question-visual" style="--domain:${domain.color}">
+            <img src="./assets/quiz-hangar.webp" alt="Neutral photographic scene of an aerospace hangar with an A400M and two professionals." />
+          </div>
           <div class="answer-grid">
             ${question.options.map((option, index) => `<button type="button" class="answer-button" data-answer="${index}"><span class="answer-key">${index + 1}</span><span>${option}</span></button>`).join('')}
           </div>

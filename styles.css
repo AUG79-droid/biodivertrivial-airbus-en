@@ -144,7 +144,10 @@ button:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--cyan);
 .question-context { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: 1.25rem; }
 .tag { padding: .42rem .6rem; border: 1px solid var(--line); border-radius: 999px; color: #b6c9d4; background: rgba(9,32,51,.65); font-size: .68rem; font-weight: 750; }
 .tag.domain { border-color: color-mix(in srgb, var(--domain) 55%, transparent); color: color-mix(in srgb, var(--domain) 78%, white); }
-.answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: auto; }
+.question-visual { position: relative; flex: 1 1 220px; min-height: 180px; max-height: 320px; margin: 0 0 1rem; overflow: hidden; border: 1px solid color-mix(in srgb, var(--domain) 32%, var(--line)); border-radius: 18px; background: #081827; }
+.question-visual::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(4,15,26,.04), rgba(4,15,26,.28)), linear-gradient(90deg, color-mix(in srgb, var(--domain) 12%, transparent), transparent 36%); box-shadow: inset 0 0 42px rgba(2,10,18,.18); }
+.question-visual img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 46%; filter: saturate(.9) contrast(1.04) brightness(.88); }
+.answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: 0; }
 .answer-button { min-height: 128px; display: grid; grid-template-columns: 42px 1fr; align-items: center; gap: .85rem; padding: 1rem; border: 1px solid var(--line); border-radius: 16px; color: #e7f0f5; background: rgba(12, 41, 63, .72); text-align: left; line-height: 1.45; transition: transform .15s ease, border-color .15s ease, background .15s ease; }
 .answer-button:hover { transform: translateY(-2px); border-color: rgba(77,228,255,.52); background: rgba(18, 57, 83, .82); }
 .answer-key { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 11px; color: #03131d; background: #b8eaf2; font-weight: 950; }
@@ -256,6 +259,7 @@ button:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--cyan);
   .resume-card { align-items: stretch; flex-direction: column; }
   .mode-card { grid-template-columns: 42px 1fr; }
   .mode-card > span:last-child { display: none; }
+  .question-visual { flex: 0 0 180px; min-height: 180px; max-height: 180px; border-radius: 14px; }
   .answer-grid { grid-template-columns: 1fr; }
   .answer-button { min-height: 94px; }
   .question-top h1 { font-size: 1.65rem; }
