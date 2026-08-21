@@ -363,4 +363,63 @@ const QUESTIONS = [
   },
 ];
 
+const QUESTION_IMAGE_ALTS = [
+  '',
+  'Temperate woodland, meadow and pond forming a varied natural landscape.',
+  'Mediterranean island lizard among coastal rocks and vegetation.',
+  'Herd of wild deer crossing a varied upland meadow.',
+  'Unfamiliar flowering plant beside a European transport yard.',
+  'European beaver resting beside a river at sunrise.',
+  'Lichens on mature tree bark with a field observer in the background.',
+  'Bird, moth and distant bat in a woodland-edge scene at twilight.',
+  'Illuminated industrial building beside dark vegetation at night.',
+  'Multiple wild species sharing a grassland at sunrise.',
+  'Spring reedbed and meadow with inactive machinery in the distance.',
+  'River watershed linking forest, farmland and a small town.',
+  'Healthy wetland with open water, reeds and distant waterbirds.',
+  'Woodland patches linked by a hedgerow and stream across farmland.',
+  'Dark forest soil with leaf litter, fine roots and an earthworm.',
+  'Forest landscape divided by a road.',
+  'Undisturbed meadow beside a distant industrial facility.',
+  'Industrial site within a broad river catchment and surrounding farmland.',
+  'Aerospace manufacturing hall opening towards the surrounding landscape.',
+  'Vegetated stream integrated beside modern business buildings.',
+  'Mature coastal woodland beneath changing weather.',
+  'Project team gathered around an unmarked physical site model.',
+  'Quiet construction boundary beside an intact woodland edge.',
+  'Secure aerospace perimeter illuminated beside dark vegetation.',
+  'Degraded riverbank restoration worksite with inactive machinery.',
+  'Infrastructure construction with a newly created habitat area in the distance.',
+  'Young shallow pond in a field with an older pond in the distance.',
+  'Unfamiliar flowering plant being observed at an industrial site.',
+  'Field team walking through a restored meadow during a monitoring visit.',
+  'Natural-looking mixture of grasses and wildflowers in a restored meadow.',
+  'Removed aircraft engine resting on a clean maintenance workbench.',
+  'Calm woodland pond surrounded by mature vegetation.',
+  'Environmental specialist in open terrain with a tablet and closed sensor case.',
+  'Rows of newly planted young trees across an open field.',
+  'Corporate presenter speaking beside a blank display.',
+  'Field ecologist looking across a landscape partly hidden by mist.',
+  'Environmental specialist in remote terrain beneath a small observation aircraft.',
+  'Natural meadow and stream immediately beside an industrial aerospace facility.',
+  'Small team visiting a recently restored natural habitat.',
+  'Compact environmental sensor station beside a quiet pond.',
+  'Environmental management team meeting beside an unmarked board.',
+  'A400M in a maintenance hangar with a floor drain and small nearby stain.',
+  'Eurofighter beside spring airfield grassland with birds in the distance.',
+  'Aerospace facility with a vacant developed lot and adjacent natural field.',
+  'Aerodrome runway, distant birds and a parked wildlife-management vehicle.',
+  'Wooden transport crates stored inside an aerospace logistics warehouse.',
+  'Industrial campus grassland with different heights and a parked mower.',
+  'Analyst viewing a satellite landscape image in an operations room.',
+  'Critical-mineral samples beside an unbranded electronic aircraft module.',
+  'Removed aircraft avionics component on a retrofit maintenance bench.',
+  'Aerospace maintenance team holding a neutral debrief after an incident.',
+];
+
+QUESTIONS.forEach((question) => {
+  question.image = `./assets/questions/q${String(question.id).padStart(2, '0')}.webp`;
+  question.imageAlt = QUESTION_IMAGE_ALTS[question.id];
+});
+
 window.KNOWLEDGE_CHECK = { DOMAINS, QUESTIONS };
